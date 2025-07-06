@@ -2,9 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { vendors } from '@/lib/data';
-import { Camera, QrCode, Store, Utensils } from 'lucide-react';
+import { Camera, Store, Utensils } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import CameraScan from '@/components/camera-scan';
 
 export default function Home() {
   return (
@@ -35,10 +36,7 @@ export default function Home() {
                 Position your student ID card in front of the camera.
               </DialogDescription>
             </DialogHeader>
-            <div className="py-8 flex flex-col items-center justify-center gap-4">
-              <QrCode className="h-32 w-32 text-muted-foreground animate-pulse" />
-              <p className="text-sm text-muted-foreground">Searching for QR code...</p>
-            </div>
+            <CameraScan />
           </DialogContent>
         </Dialog>
       </section>
