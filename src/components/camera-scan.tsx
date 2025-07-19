@@ -5,14 +5,12 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle, QrCode, CameraOff } from 'lucide-react';
-import { BrowserMultiFormatReader, IScannerControls, NotFoundException } from '@zxing/library';
+import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { Button } from './ui/button';
 
 export default function CameraScan() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const controlsRef = useRef<IScannerControls | null>(null);
-  const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
-  const isMountedRef = useRef(true);
+  const codeReaderRef = useRef(new BrowserMultiFormatReader());
   
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
@@ -41,44 +39,34 @@ export default function CameraScan() {
       console.error("Failed to play beep sound.", e);
     }
   };
-  
+
   const stopScan = useCallback(() => {
-    if (controlsRef.current) {
-      controlsRef.current.stop();
-      controlsRef.current = null;
-    }
+    codeReaderRef.current.reset();
     setIsScanning(false);
   }, []);
 
   const startScan = useCallback(async () => {
-    if (isScanning || !isMountedRef.current || !videoRef.current) return;
+    if (isScanning || !videoRef.current) return;
     
     setScanResult(null);
     setIsScanning(true);
 
-    if (!codeReaderRef.current) {
-      codeReaderRef.current = new BrowserMultiFormatReader();
-    }
-    const codeReader = codeReaderRef.current;
-
     try {
-      const videoInputDevices = await codeReader.listVideoInputDevices();
+      const videoInputDevices = await codeReaderRef.current.listVideoInputDevices();
       if (videoInputDevices.length === 0) {
-        if (!isMountedRef.current) return;
         setHasCameraPermission(false);
         setIsScanning(false);
         return;
       }
       
-      if (!isMountedRef.current) return;
       setHasCameraPermission(true);
       const firstDeviceId = videoInputDevices[0].deviceId;
 
-      controlsRef.current = codeReader.decodeFromVideoDevice(
+      await codeReaderRef.current.decodeFromVideoDevice(
         firstDeviceId,
         videoRef.current,
         (result, err) => {
-          if (!isMountedRef.current || !isScanning) return;
+          if (!isScanning) return;
 
           if (result) {
             playBeep();
@@ -93,23 +81,20 @@ export default function CameraScan() {
       );
 
     } catch (error) {
-      if (!isMountedRef.current) return;
       console.error('Error initializing camera:', error);
       setHasCameraPermission(false);
       setIsScanning(false);
     }
-  }, [isScanning, stopScan, toast]);
+  }, [isScanning, stopScan]);
 
 
   useEffect(() => {
-    isMountedRef.current = true;
     startScan();
 
     return () => {
-      isMountedRef.current = false;
       stopScan();
     };
-  }, []);
+  }, [startScan, stopScan]);
 
   useEffect(() => {
     if (scanResult) {
