@@ -10,68 +10,64 @@ import { BrowserMultiFormatReader, IScannerControls, NotFoundException } from '@
 export default function CameraScan() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
-  const isScannedRef = useRef(false);
+  const isMountedRef = useRef(true);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // This effect runs once on mount to initialize the scanner
+    isMountedRef.current = true;
+
     const codeReader = new BrowserMultiFormatReader();
-    
+
     const startScan = async () => {
-      // Ensure the video element is mounted
-      if (!videoRef.current) {
+      if (!videoRef.current || !isMountedRef.current) {
         return;
       }
 
-      // Reset scan status for re-scans if the dialog is reopened
-      isScannedRef.current = false;
-      setScanResult(null);
-
       try {
-        // listVideoInputDevices should be called on the instance
         const videoInputDevices = await codeReader.listVideoInputDevices();
-
-        if (videoInputDevices.length > 0) {
-          setHasCameraPermission(true);
-          const firstDeviceId = videoInputDevices[0].deviceId;
-
-          // decodeFromVideoDevice will start the camera stream and continuously scan
-          controlsRef.current = await codeReader.decodeFromVideoDevice(firstDeviceId, videoRef.current, (result, err) => {
-            if (result && !isScannedRef.current) {
-              // Once a result is found, we stop scanning
-              isScannedRef.current = true;
-              setScanResult(result.getText());
-              toast({
-                title: 'Scan Successful!',
-                description: `ID Scanned.`,
-              });
-              // Stop the scanner and release the camera
-              controlsRef.current?.stop();
-            }
-
-            // We want to ignore NotFoundException because it's thrown when no code is found in a frame
-            if (err && !(err instanceof NotFoundException)) {
-              console.error('Barcode scan error:', err);
-              toast({
-                variant: 'destructive',
-                title: 'Scan Error',
-                description: 'An error occurred while scanning.',
-              });
-            }
-          });
-        } else {
-          // No camera found
+        if (videoInputDevices.length === 0) {
+          if (!isMountedRef.current) return;
           setHasCameraPermission(false);
           toast({
             variant: 'destructive',
             title: 'No Camera Found',
             description: 'Could not find a camera on this device.',
           });
+          return;
         }
+        if (!isMountedRef.current) return;
+
+        setHasCameraPermission(true);
+        const firstDeviceId = videoInputDevices[0].deviceId;
+
+        controlsRef.current = await codeReader.decodeFromVideoDevice(
+          firstDeviceId,
+          videoRef.current,
+          (result, err) => {
+            if (!isMountedRef.current) return;
+
+            if (result) {
+              setScanResult(result.getText());
+              toast({
+                title: 'Scan Successful!',
+                description: `ID Scanned.`,
+              });
+              if (controlsRef.current) {
+                controlsRef.current.stop();
+                controlsRef.current = null;
+              }
+            }
+
+            if (err && !(err instanceof NotFoundException)) {
+              console.error('Barcode scan error:', err);
+              // Avoid spamming toasts for continuous scan errors
+            }
+          }
+        );
       } catch (error) {
-        // This block catches permission denied errors
+        if (!isMountedRef.current) return;
         console.error('Error initializing camera:', error);
         setHasCameraPermission(false);
         toast({
@@ -84,11 +80,15 @@ export default function CameraScan() {
 
     startScan();
 
-    // The cleanup function is critical to release the camera when the component unmounts
     return () => {
-      controlsRef.current?.stop();
+      isMountedRef.current = false;
+      if (controlsRef.current) {
+        controlsRef.current.stop();
+        controlsRef.current = null;
+      }
     };
   }, [toast]);
+
 
   return (
     <div className="py-4 flex flex-col items-center justify-center gap-4">
