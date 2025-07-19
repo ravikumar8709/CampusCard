@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -29,15 +30,15 @@ export default function CameraScan() {
       setScanResult(null);
 
       try {
-        // The static method listVideoInputDevices prompts for permission
-        const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
+        // listVideoInputDevices should be called on the instance
+        const videoInputDevices = await codeReader.listVideoInputDevices();
 
         if (videoInputDevices.length > 0) {
           setHasCameraPermission(true);
           const firstDeviceId = videoInputDevices[0].deviceId;
 
           // decodeFromVideoDevice will start the camera stream and continuously scan
-          controlsRef.current = codeReader.decodeFromVideoDevice(firstDeviceId, videoRef.current, (result, err) => {
+          controlsRef.current = await codeReader.decodeFromVideoDevice(firstDeviceId, videoRef.current, (result, err) => {
             if (result && !isScannedRef.current) {
               // Once a result is found, we stop scanning
               isScannedRef.current = true;
