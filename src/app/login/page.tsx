@@ -9,6 +9,8 @@ import { signInWithGoogle } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-provider';
+import { useEffect } from 'react';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -20,17 +22,24 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      toast({
+        title: 'Sign In Successful',
+        description: `Welcome back, ${user.displayName}!`,
+      });
+      router.push('/account');
+    }
+  }, [user, loading, router, toast]);
+
 
   const handleGoogleSignIn = async () => {
     try {
-        const user = await signInWithGoogle();
-        if (user) {
-          toast({
-            title: 'Sign In Successful',
-            description: `Welcome back, ${user.displayName}!`,
-          });
-          router.push('/account');
-        }
+        await signInWithGoogle();
+        // The page will redirect, so we don't need to do anything here.
+        // The useEffect above will handle the successful login after redirect.
     } catch (error) {
         console.error("Sign-in failed", error);
         toast({
