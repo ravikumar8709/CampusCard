@@ -22,19 +22,23 @@ export default function LoginPage() {
   const { toast } = useToast();
 
   const handleGoogleSignIn = async () => {
-    const user = await signInWithGoogle();
-    if (user) {
-      toast({
-        title: 'Sign In Successful',
-        description: `Welcome back, ${user.displayName}!`,
-      });
-      router.push('/account');
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Sign In Failed',
-        description: 'Could not sign in with Google. Please try again.',
-      });
+    try {
+        const user = await signInWithGoogle();
+        if (user) {
+          toast({
+            title: 'Sign In Successful',
+            description: `Welcome back, ${user.displayName}!`,
+          });
+          router.push('/account');
+        }
+        // No need for an else here, as signInWithGoogle will throw on error
+    } catch (error) {
+        console.error("Sign-in failed", error);
+        toast({
+            variant: 'destructive',
+            title: 'Sign In Failed',
+            description: 'Could not sign in with Google. Please try again.',
+        });
     }
   };
 
