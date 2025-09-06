@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/contexts/cart-provider';
 import Header from '@/components/header';
 import { cn } from '@/lib/utils';
+import { AuthProvider } from '@/contexts/auth-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -21,13 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn('font-body antialiased', inter.variable)}>
-        <CartProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-          </div>
-          <Toaster />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+            </div>
+            <Toaster />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

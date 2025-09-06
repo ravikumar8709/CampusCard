@@ -5,7 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { signInWithGoogle } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -15,6 +18,27 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleGoogleSignIn = async () => {
+    const user = await signInWithGoogle();
+    if (user) {
+      toast({
+        title: 'Sign In Successful',
+        description: `Welcome back, ${user.displayName}!`,
+      });
+      router.push('/account');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Sign In Failed',
+        description: 'Could not sign in with Google. Please try again.',
+      });
+    }
+  };
+
+
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] py-12 px-4">
       <Card className="w-full max-w-md shadow-2xl">
@@ -24,7 +48,7 @@ export default function LoginPage() {
             <CardDescription>Select a method to sign in to your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Button variant="outline" className="w-full text-base py-6">
+            <Button variant="outline" className="w-full text-base py-6" onClick={handleGoogleSignIn}>
               <GoogleIcon className="mr-3 h-5 w-5" />
               Sign in with Google
             </Button>

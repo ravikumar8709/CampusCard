@@ -1,12 +1,37 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { user } from '@/lib/data';
+import { useAuth } from '@/contexts/auth-provider';
+import { signOut } from '@/lib/auth';
 import { CreditCard, History, LogOut, User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function AccountPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
+  if (!user) {
+    // Optionally, redirect to login if no user is signed in.
+    // Or show a message.
+    return (
+      <div className="container mx-auto max-w-3xl px-4 py-8 text-center">
+        <p>You must be logged in to view this page.</p>
+        <Button asChild className="mt-4">
+          <Link href="/login">Login</Link>
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="flex items-center mb-8">
@@ -17,11 +42,11 @@ export default function AccountPage() {
       <Card className="mb-8">
         <CardHeader className="flex flex-row items-center gap-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={user.avatar} alt={user.name} data-ai-hint={user.dataAiHint} />
-            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || ''} />
+            <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-2xl font-headline">{user.name}</CardTitle>
+            <CardTitle className="text-2xl font-headline">{user.displayName}</CardTitle>
             <CardDescription>{user.email}</CardDescription>
           </div>
         </CardHeader>
@@ -65,7 +90,7 @@ export default function AccountPage() {
 
         <Separator />
         
-        <Button variant="destructive" className="w-full">
+        <Button variant="destructive" className="w-full" onClick={handleSignOut}>
             <LogOut className="w-4 h-4 mr-2" />
             Log Out
         </Button>
