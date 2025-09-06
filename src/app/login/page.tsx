@@ -31,7 +31,6 @@ export default function LoginPage() {
           });
           router.push('/account');
         }
-        // No need for an else here, as signInWithGoogle will throw on error
     } catch (error) {
         console.error("Sign-in failed", error);
         toast({
