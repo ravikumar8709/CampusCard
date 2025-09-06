@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,7 @@ export default function LoginPage() {
         title: 'Sign In Successful',
         description: `Welcome back, ${user.displayName}!`,
       });
-      router.push('/account');
+      router.push('/');
     }
   }, [user, loading, router, toast]);
 
