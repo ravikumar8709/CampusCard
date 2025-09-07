@@ -1,3 +1,4 @@
+
 import type { Vendor, Transaction, Product } from './types';
 
 export const vendors: Vendor[] = [
