@@ -3,7 +3,7 @@ import type { Vendor, Transaction, Product } from './types';
 export const vendors: Vendor[] = [
   {
     id: '1',
-    name: 'Café Connect',
+    name: 'Bombay Chaatwala',
     description: 'Freshly brewed coffee, pastries, and sandwiches. The perfect spot to recharge between classes.',
     image: 'https://placehold.co/600x400.png',
     dataAiHint: 'coffee shop',
@@ -45,7 +45,7 @@ export const vendors: Vendor[] = [
 export const transactions: Transaction[] = [
   {
     id: 't1',
-    vendorName: 'Café Connect',
+    vendorName: 'Bombay Chaatwala',
     date: '2024-05-20',
     items: [
       { name: 'Espresso', quantity: 1, price: 2.50 },
