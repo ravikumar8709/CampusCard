@@ -49,23 +49,15 @@ export default function CameraScan() {
   }, []);
 
   const startScan = useCallback(async () => {
-    if (isScanning || !videoRef.current || !codeReaderRef.current) return;
+    if (!videoRef.current || !codeReaderRef.current) return;
     
     setScanResult(null);
     setIsScanning(true);
 
     try {
-      const videoInputDevices = await codeReaderRef.current.listVideoInputDevices();
-      if (videoInputDevices.length === 0) {
-        setHasCameraPermission(false);
-        setIsScanning(false);
-        return;
-      }
-      
-      const firstDeviceId = videoInputDevices[0].deviceId;
-
+      // The decodeFromVideoDevice will stream from the camera and decode continuously
       await codeReaderRef.current.decodeFromVideoDevice(
-        firstDeviceId,
+        undefined, // Use undefined to let ZXing pick the default camera
         videoRef.current,
         (result, err) => {
           if (result) {
@@ -76,16 +68,18 @@ export default function CameraScan() {
 
           if (err && !(err instanceof NotFoundException)) {
             console.error('Barcode scan error:', err);
+            // Optionally stop scanning on other errors too
+            stopScan();
           }
         }
       );
 
     } catch (error) {
       console.error('Error initializing camera for scanning:', error);
-      setHasCameraPermission(false);
+      setHasCameraPermission(false); // Assume permission issue or no camera
       setIsScanning(false);
     }
-  }, [isScanning, stopScan]);
+  }, [stopScan]);
 
 
   // Effect for initializing and cleaning up the scanner
@@ -95,6 +89,7 @@ export default function CameraScan() {
     // Request permission and start stream
     const getCameraPermission = async () => {
       try {
+        // We only ask for permission here, not for starting the scan
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setHasCameraPermission(true);
         if (videoRef.current) {
@@ -120,15 +115,6 @@ export default function CameraScan() {
     };
   }, []);
 
-
-  // Effect to start scanning once permission is granted
-  useEffect(() => {
-    if(hasCameraPermission && !isScanning){
-        startScan();
-    }
-  }, [hasCameraPermission, isScanning, startScan]);
-
-
   useEffect(() => {
     if (scanResult) {
        toast({
@@ -146,8 +132,8 @@ export default function CameraScan() {
         
         {hasCameraPermission === null && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-background">
-            <QrCode className="h-16 w-16 mb-4 animate-pulse" />
-            <p className="text-sm">Initializing camera...</p>
+            <CameraOff className="h-16 w-16 mb-4 animate-pulse" />
+            <p className="text-sm">Requesting Camera Permission...</p>
           </div>
         )}
 
@@ -166,6 +152,13 @@ export default function CameraScan() {
             <p className="text-sm mt-2 text-center break-all">ID: {scanResult}</p>
           </div>
         )}
+
+        {isScanning && !scanResult && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="w-2/3 h-1/2 border-4 border-dashed border-white/50 rounded-lg animate-pulse" />
+                <p className="text-white mt-4 font-semibold bg-black/50 px-3 py-1 rounded-md">Scanning...</p>
+            </div>
+        )}
       </div>
 
       {hasCameraPermission === false ? (
@@ -176,11 +169,9 @@ export default function CameraScan() {
           </AlertDescription>
         </Alert>
       ) : (
-        scanResult && (
-          <Button onClick={startScan} className="w-full">
-            Scan Again
-          </Button>
-        )
+        <Button onClick={startScan} disabled={isScanning} className="w-full">
+            {scanResult ? <><QrCode className="mr-2 h-4 w-4" />Scan Again</> : 'Start Scanning'}
+        </Button>
       )}
     </div>
   );
