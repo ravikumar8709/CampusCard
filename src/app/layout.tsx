@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './print.css'; // Import print styles
 import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/contexts/cart-provider';
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body className={cn('font-body antialiased', inter.variable)}>
         <AuthProvider>
           <CartProvider>
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col print:hidden">
               <Header />
               <main className="flex-1">{children}</main>
             </div>
