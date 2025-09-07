@@ -11,6 +11,8 @@ export interface Vendor {
   id: string;
   name: string;
   description: string;
+  image: string;
+  imageHint: string;
   products: Product[];
 }
 

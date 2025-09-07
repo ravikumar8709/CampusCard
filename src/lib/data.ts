@@ -6,6 +6,8 @@ export const vendors: Vendor[] = [
     id: '1',
     name: 'Bombay Chaatwala',
     description: 'Authentic Indian street food, bursting with flavor. A campus favorite for a spicy kick!',
+    image: 'https://picsum.photos/600/400',
+    imageHint: 'indian street food',
     products: [
       { id: '101', name: 'Vegetable Samosa', price: 2.25, stock: 60 },
       { id: '102', name: 'Pani Puri', price: 5.00, stock: 40 },
@@ -17,6 +19,8 @@ export const vendors: Vendor[] = [
     id: '2',
     name: 'Lee Corner',
     description: 'Your campus convenience store for quick bites, drinks, and study essentials.',
+    image: 'https://picsum.photos/600/400',
+    imageHint: 'convenience store',
     products: [
       { id: '201', name: 'Energy Drink', price: 3.50, stock: 100 },
       { id: '202', name: 'Protein Bar', price: 2.75, stock: 80 },
@@ -28,6 +32,8 @@ export const vendors: Vendor[] = [
     id: '3',
     name: 'Samosa Spot',
     description: 'Authentic, flavorful samosas and Indian street food. A campus favorite!',
+    image: 'https://picsum.photos/600/400',
+    imageHint: 'samosas food',
     products: [
       { id: '301', name: 'Vegetable Samosa', price: 2.00, stock: 75 },
       { id: '302', name: 'Chicken Samosa', price: 2.50, stock: 50 },
@@ -39,6 +45,8 @@ export const vendors: Vendor[] = [
     id: '4',
     name: 'Fruit Shop',
     description: 'Fresh and juicy fruits, smoothies, and healthy juices.',
+    image: 'https://picsum.photos/600/400',
+    imageHint: 'fresh fruit',
     products: [
       { id: '401', name: 'Banana', price: 0.50, stock: 150 },
       { id: '402', name: 'Orange Juice', price: 3.50, stock: 50 },
