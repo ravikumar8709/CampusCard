@@ -18,7 +18,6 @@ import { useToast } from '@/hooks/use-toast';
 import { vendors } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { Camera, Loader2, Store, Utensils } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -124,15 +123,6 @@ export default function Home() {
           {vendors.map((vendor) => (
             <Link href={`/vendors/${vendor.id}`} key={vendor.id} className="group">
               <Card className={cn('glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2')}>
-                 <div className="relative aspect-video">
-                  <Image
-                    src={vendor.image}
-                    alt={vendor.name}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={vendor.imageHint}
-                  />
-                </div>
                 <CardContent className="p-6 flex-1 flex flex-col">
                     <CardTitle className="font-headline text-2xl mb-2">{vendor.name}</CardTitle>
                     <CardDescription className="text-base">{vendor.description}</CardDescription>

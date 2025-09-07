@@ -11,7 +11,6 @@ import { notFound, useParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 export default function VendorPage() {
   const params = useParams<{ id: string }>();
@@ -51,15 +50,6 @@ export default function VendorPage() {
           </Link>
         </Button>
         <div className="flex flex-col md:flex-row items-start gap-8">
-          <div className="w-full md:w-1/3 aspect-video relative rounded-lg overflow-hidden glass-card">
-             <Image
-                src={vendor.image}
-                alt={vendor.name}
-                fill
-                className="object-cover"
-                data-ai-hint={vendor.imageHint}
-              />
-          </div>
           <div className="md:w-2/3">
             <h1 className="text-4xl font-bold font-headline">{vendor.name}</h1>
             <p className="mt-2 text-lg text-muted-foreground">{vendor.description}</p>
