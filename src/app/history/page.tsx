@@ -1,3 +1,4 @@
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { transactions } from '@/lib/data';
@@ -23,7 +24,7 @@ export default function HistoryPage() {
                         <p className="font-semibold text-base">{transaction.vendorName}</p>
                         <p className="text-sm text-muted-foreground">{new Date(transaction.date).toLocaleDateString()}</p>
                       </div>
-                      <p className="font-bold text-lg text-primary">${transaction.total.toFixed(2)}</p>
+                      <p className="font-bold text-lg text-primary">₹{transaction.total.toFixed(2)}</p>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -33,14 +34,14 @@ export default function HistoryPage() {
                         {transaction.items.map((item, index) => (
                           <li key={index} className="flex justify-between text-sm">
                             <span>{item.name} x{item.quantity}</span>
-                            <span>${(item.price * item.quantity).toFixed(2)}</span>
+                            <span>₹{(item.price * item.quantity).toFixed(2)}</span>
                           </li>
                         ))}
                       </ul>
                       <div className="border-t my-2"></div>
                        <div className="flex justify-between font-semibold text-sm">
                             <span>Total</span>
-                            <span>${transaction.total.toFixed(2)}</span>
+                            <span>₹{transaction.total.toFixed(2)}</span>
                         </div>
                     </div>
                   </AccordionContent>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import QuantitySelector from '@/components/quantity-selector';
@@ -64,7 +65,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-lg">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                      <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)} each</p>
                       <QuantitySelector 
                         quantity={item.quantity}
                         onQuantityChange={(newQuantity) => dispatch({ type: 'UPDATE_QUANTITY', payload: { productId: item.id, quantity: newQuantity }})}
@@ -72,7 +73,7 @@ export default function CartPage() {
                         className="mt-2"
                       />
                     </div>
-                    <p className="font-semibold text-lg">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-semibold text-lg">₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -88,16 +89,16 @@ export default function CartPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Taxes & Fees</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-xl">
                 <span>Order Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toFixed(2)}</span>
               </div>
               <Separator />
               <div className="pt-2">

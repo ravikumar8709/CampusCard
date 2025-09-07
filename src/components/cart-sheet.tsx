@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from '@/components/ui/sheet';
@@ -32,7 +33,7 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">{item.name}</p>
-                    <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>
                     <QuantitySelector 
                       quantity={item.quantity}
                       onQuantityChange={(newQuantity) => dispatch({ type: 'UPDATE_QUANTITY', payload: { productId: item.id, quantity: newQuantity }})}
@@ -58,7 +59,7 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
                 <Separator />
                 <div className="flex justify-between items-center font-semibold text-lg">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
                 <SheetClose asChild>
                   <Button asChild size="lg" className="w-full">

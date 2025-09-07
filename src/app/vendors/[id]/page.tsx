@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -81,7 +82,7 @@ export default function VendorPage() {
               <CardContent className="p-4 flex-1 flex flex-col">
                 <CardTitle className="text-xl font-headline mb-1">{product.name}</CardTitle>
                 <CardDescription>
-                  <span className="text-base text-primary font-semibold">${product.price.toFixed(2)}</span>
+                  <span className="text-base text-primary font-semibold">₹{product.price.toFixed(2)}</span>
                   <span className="text-sm text-muted-foreground ml-2">({stock} available)</span>
                 </CardDescription>
               </CardContent>
