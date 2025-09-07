@@ -42,7 +42,6 @@ export default function AccountPage() {
       <Card className="mb-8">
         <CardHeader className="flex flex-row items-center gap-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || ''} />
             <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>

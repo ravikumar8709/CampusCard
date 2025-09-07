@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useCart } from '@/contexts/cart-provider';
 import { vendors } from '@/lib/data';
 import { ArrowLeft, CheckCircle, Plus } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -50,9 +49,6 @@ export default function VendorPage() {
           </Link>
         </Button>
         <div className="flex flex-col md:flex-row items-start gap-8">
-          <div className="relative w-full md:w-1/3 h-64 md:h-80 rounded-lg overflow-hidden shadow-md">
-            <Image src={vendor.image} alt={vendor.name} fill className="object-cover" data-ai-hint={vendor.dataAiHint} />
-          </div>
           <div className="md:w-2/3">
             <h1 className="text-4xl font-bold font-headline">{vendor.name}</h1>
             <p className="mt-2 text-lg text-muted-foreground">{vendor.description}</p>
@@ -69,16 +65,6 @@ export default function VendorPage() {
 
           return (
             <Card key={product.id} className="flex flex-col overflow-hidden">
-              <CardHeader className="p-0">
-                <div className="relative h-48 w-full">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" data-ai-hint={product.dataAiHint} />
-                  {isOutOfStock && (
-                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <p className="text-white font-bold text-lg">Out of Stock</p>
-                    </div>
-                  )}
-                </div>
-              </CardHeader>
               <CardContent className="p-4 flex-1 flex flex-col">
                 <CardTitle className="text-xl font-headline mb-1">{product.name}</CardTitle>
                 <CardDescription>

@@ -3,7 +3,6 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import { useCart } from '@/contexts/cart-provider';
-import Image from 'next/image';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -28,9 +27,6 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
               <div className="px-6">
               {state.items.map(item => (
                 <div key={item.id} className="flex items-start gap-4 py-4">
-                  <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" data-ai-hint={item.dataAiHint} />
-                  </div>
                   <div className="flex-1">
                     <p className="font-semibold">{item.name}</p>
                     <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>

@@ -23,6 +23,7 @@ Avatar.displayName = AvatarPrimitive.Root.displayName
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+// @ts-ignore
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}

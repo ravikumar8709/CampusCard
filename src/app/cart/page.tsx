@@ -8,7 +8,6 @@ import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/cart-provider';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, CreditCard, ShoppingBag } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -60,9 +59,6 @@ export default function CartPage() {
               <div className="space-y-4">
                 {state.items.map(item => (
                   <div key={item.id} className="flex items-start gap-4">
-                    <div className="relative h-24 w-24 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image src={item.image} alt={item.name} fill className="object-cover" data-ai-hint={item.dataAiHint} />
-                    </div>
                     <div className="flex-1">
                       <p className="font-semibold text-lg">{item.name}</p>
                       <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)} each</p>

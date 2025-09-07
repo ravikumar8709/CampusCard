@@ -3,16 +3,12 @@ export interface Product {
   name: string;
   price: number;
   stock: number;
-  image: string;
-  dataAiHint: string;
 }
 
 export interface Vendor {
   id: string;
   name: string;
   description: string;
-  image: string;
-  dataAiHint: string;
   products: Product[];
 }
 

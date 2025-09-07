@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { vendors } from '@/lib/data';
 import { Camera, Store, Utensils } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import CameraScan from '@/components/camera-scan';
 import { useCart } from '@/contexts/cart-provider';
@@ -74,17 +73,6 @@ export default function Home() {
           {vendors.map((vendor) => (
             <Link href={`/vendors/${vendor.id}`} key={vendor.id} className="group">
               <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                <CardHeader className="p-0">
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={vendor.image}
-                      alt={vendor.name}
-                      fill
-                      className="object-cover"
-                      data-ai-hint={vendor.dataAiHint}
-                    />
-                  </div>
-                </CardHeader>
                 <CardContent className="p-6 flex-1 flex flex-col">
                     <CardTitle className="font-headline text-2xl mb-2">{vendor.name}</CardTitle>
                     <CardDescription className="text-base">{vendor.description}</CardDescription>
