@@ -10,7 +10,8 @@ import { Button } from './ui/button';
 
 export default function CameraScan() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const codeReaderRef = useRef(new BrowserMultiFormatReader());
+  // Use a ref to hold the code reader instance to avoid re-creation
+  const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
   
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
@@ -41,12 +42,14 @@ export default function CameraScan() {
   };
 
   const stopScan = useCallback(() => {
-    codeReaderRef.current.reset();
+    if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
+    }
     setIsScanning(false);
   }, []);
 
   const startScan = useCallback(async () => {
-    if (isScanning || !videoRef.current) return;
+    if (isScanning || !videoRef.current || !codeReaderRef.current) return;
     
     setScanResult(null);
     setIsScanning(true);
@@ -59,15 +62,12 @@ export default function CameraScan() {
         return;
       }
       
-      setHasCameraPermission(true);
       const firstDeviceId = videoInputDevices[0].deviceId;
 
       await codeReaderRef.current.decodeFromVideoDevice(
         firstDeviceId,
         videoRef.current,
         (result, err) => {
-          if (!isScanning) return;
-
           if (result) {
             playBeep();
             setScanResult(result.getText());
@@ -81,20 +81,53 @@ export default function CameraScan() {
       );
 
     } catch (error) {
-      console.error('Error initializing camera:', error);
+      console.error('Error initializing camera for scanning:', error);
       setHasCameraPermission(false);
       setIsScanning(false);
     }
   }, [isScanning, stopScan]);
 
 
+  // Effect for initializing and cleaning up the scanner
   useEffect(() => {
-    startScan();
-
-    return () => {
-      stopScan();
+    codeReaderRef.current = new BrowserMultiFormatReader();
+    
+    // Request permission and start stream
+    const getCameraPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setHasCameraPermission(true);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+      }
     };
-  }, [startScan, stopScan]);
+    
+    getCameraPermission();
+
+    // Cleanup
+    return () => {
+      if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
+      }
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+
+  // Effect to start scanning once permission is granted
+  useEffect(() => {
+    if(hasCameraPermission && !isScanning){
+        startScan();
+    }
+  }, [hasCameraPermission, isScanning, startScan]);
+
 
   useEffect(() => {
     if (scanResult) {
@@ -111,7 +144,7 @@ export default function CameraScan() {
       <div className="relative w-full aspect-video rounded-md overflow-hidden border bg-muted">
         <video ref={videoRef} className={`w-full h-full object-cover ${scanResult ? 'blur-sm' : ''}`} autoPlay muted playsInline />
         
-        {!isScanning && hasCameraPermission === null && (
+        {hasCameraPermission === null && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-background">
             <QrCode className="h-16 w-16 mb-4 animate-pulse" />
             <p className="text-sm">Initializing camera...</p>
