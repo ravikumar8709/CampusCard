@@ -1,35 +1,77 @@
 
 'use client';
 
+import { getStudentProfile } from '@/ai/flows/student-profile-flow';
+import CameraScan from '@/components/camera-scan';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { vendors } from '@/lib/data';
-import { Camera, Store, Utensils } from 'lucide-react';
-import Link from 'next/link';
-import CameraScan from '@/components/camera-scan';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { useCart } from '@/contexts/cart-provider';
 import { useToast } from '@/hooks/use-toast';
+import { vendors } from '@/lib/data';
+import { cn } from '@/lib/utils';
+import { Camera, Loader2, Store, Utensils } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 
 export default function Home() {
-  const { dispatch } = useCart();
+  const { dispatch, state } = useCart();
   const { toast } = useToast();
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleScanSuccess = (scanResult: string) => {
-    // In a real app, you would likely validate the scanResult with a backend
-    // and associate the payment with the student ID.
-    dispatch({ type: 'CLEAR_CART' });
-    toast({
-      title: 'Payment Successful!',
-      description: `Payment authorized for Student ID: ${scanResult}.`,
-    });
-    setIsDialogOpen(false);
-    router.push('/history');
+  const handleScanSuccess = async (scanResult: string) => {
+    // A cart must not be empty to proceed with payment.
+    if (state.items.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Your Cart is Empty',
+        description: 'Please add items to your cart before making a payment.',
+      });
+      setIsDialogOpen(false);
+      return;
+    }
+    
+    setIsProcessing(true);
+
+    try {
+      const student = await getStudentProfile(scanResult);
+
+      if (student) {
+        // In a real app, you would also trigger a payment flow with the backend.
+        dispatch({ type: 'CLEAR_CART' });
+        toast({
+          title: 'Payment Successful!',
+          description: `Payment authorized for ${student.name}.`,
+        });
+        setIsDialogOpen(false);
+        router.push('/history');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Invalid Student ID',
+          description: `The scanned ID (${scanResult}) is not a valid student ID. Please try again.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error verifying student ID:", error);
+      toast({
+        variant: 'destructive',
+        title: 'Verification Failed',
+        description: 'An error occurred while trying to verify the student ID.',
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -55,12 +97,19 @@ export default function Home() {
           </DialogTrigger>
           <DialogContent className="glass-card">
             <DialogHeader>
-              <DialogTitle>Scan ID</DialogTitle>
+              <DialogTitle>Scan ID to Pay</DialogTitle>
               <DialogDescription>
-                Position your student ID card in front of the camera.
+                Position your student ID card in front of the camera. Your cart total will be charged.
               </DialogDescription>
             </DialogHeader>
-            <CameraScan onScanSuccess={handleScanSuccess} />
+            {isProcessing ? (
+               <div className="flex flex-col items-center justify-center gap-4 py-8">
+                  <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                  <p className="text-muted-foreground">Verifying Student ID...</p>
+               </div>
+            ) : (
+              <CameraScan onScanSuccess={handleScanSuccess} />
+            )}
           </DialogContent>
         </Dialog>
       </section>
