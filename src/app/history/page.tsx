@@ -12,7 +12,7 @@ export default function HistoryPage() {
         <h1 className="text-3xl font-bold font-headline">Transaction History</h1>
       </div>
 
-      <Card>
+      <Card className="glass-card">
         <CardContent className="p-0">
           {transactions.length > 0 ? (
             <Accordion type="single" collapsible className="w-full">

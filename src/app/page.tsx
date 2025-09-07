@@ -12,6 +12,7 @@ import { useCart } from '@/contexts/cart-provider';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const { dispatch } = useCart();
@@ -47,12 +48,12 @@ export default function Home() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="lg" className="mt-8 bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+            <Button size="lg" className="mt-8 bg-foreground text-background hover:bg-foreground/90 text-lg px-8 py-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
               <Camera className="mr-3 h-6 w-6" />
               Scan Student ID to Pay
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="glass-card">
             <DialogHeader>
               <DialogTitle>Scan ID</DialogTitle>
               <DialogDescription>
@@ -72,7 +73,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {vendors.map((vendor) => (
             <Link href={`/vendors/${vendor.id}`} key={vendor.id} className="group">
-              <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <Card className={cn('glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2')}>
                 <CardContent className="p-6 flex-1 flex flex-col">
                     <CardTitle className="font-headline text-2xl mb-2">{vendor.name}</CardTitle>
                     <CardDescription className="text-base">{vendor.description}</CardDescription>

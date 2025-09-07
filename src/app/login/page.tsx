@@ -38,7 +38,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] py-12 px-4">
-      <Card className="w-full max-w-md shadow-2xl">
+      <Card className="w-full max-w-md glass-card">
         <Tabs defaultValue="signin" className="w-full">
           <CardHeader className="text-center pb-4">
              <CardTitle className="text-3xl font-bold font-headline">Welcome Back</CardTitle>

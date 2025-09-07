@@ -51,7 +51,7 @@ export default function CartPage() {
       <h1 className="text-3xl font-bold font-headline mb-8">Checkout</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="glass-card">
             <CardHeader>
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>
@@ -78,7 +78,7 @@ export default function CartPage() {
         </div>
 
         <div className="lg:col-span-1 sticky top-24">
-          <Card>
+          <Card className="glass-card">
             <CardHeader>
               <CardTitle>Total</CardTitle>
             </CardHeader>

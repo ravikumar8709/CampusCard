@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useMemo } from 'react';
+import { cn } from '@/lib/utils';
 
 export default function VendorPage() {
   const params = useParams<{ id: string }>();
@@ -64,7 +65,7 @@ export default function VendorPage() {
           const isJustAdded = addedProductId === product.id;
 
           return (
-            <Card key={product.id} className="flex flex-col overflow-hidden">
+            <Card key={product.id} className={cn('glass-card flex flex-col overflow-hidden')}>
               <CardContent className="p-4 flex-1 flex flex-col">
                 <CardTitle className="text-xl font-headline mb-1">{product.name}</CardTitle>
                 <CardDescription>

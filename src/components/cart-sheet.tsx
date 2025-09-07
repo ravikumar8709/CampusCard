@@ -9,6 +9,7 @@ import { Separator } from './ui/separator';
 import Link from 'next/link';
 import QuantitySelector from './quantity-selector';
 import { Trash2, ShoppingCart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function CartSheet({ children }: { children: React.ReactNode }) {
   const { state, dispatch } = useCart();
@@ -17,7 +18,7 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="flex flex-col">
+      <SheetContent className={cn('glass-card flex flex-col border-l-0')}>
         <SheetHeader>
           <SheetTitle>Your Cart ({state.items.reduce((s,i) => s + i.quantity, 0)})</SheetTitle>
         </SheetHeader>
