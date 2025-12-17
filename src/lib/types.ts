@@ -28,6 +28,8 @@ export interface Transaction {
     price: number;
   }[];
   total: number;
+  studentId?: string;
+  studentName?: string;
 }
 
 export interface Student {

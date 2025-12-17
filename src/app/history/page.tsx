@@ -1,17 +1,18 @@
-
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PrintableReceipt from '@/components/printable-receipt';
-import { transactions } from '@/lib/data';
+import { useCart } from '@/contexts/cart-provider';
 import type { Transaction } from '@/lib/types';
 import { History, Printer, Receipt } from 'lucide-react';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
 export default function HistoryPage() {
+  const { state } = useCart();
+  const transactions = state.transactions;
   const receiptRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
 
   const handlePrint = useReactToPrint({
@@ -83,6 +84,19 @@ export default function HistoryPage() {
                             Print Receipt
                         </Button>
                       </div>
+                      
+                      {transaction.studentId && (
+                        <div className="mb-3 pb-2 border-b text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Student:</span>
+                            <span className="font-medium">{transaction.studentName}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Student ID:</span>
+                            <span className="font-mono text-xs">{transaction.studentId}</span>
+                          </div>
+                        </div>
+                      )}
 
                       <ul className="space-y-1">
                         {transaction.items.map((item, index) => (

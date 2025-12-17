@@ -1,6 +1,5 @@
 'use client';
 
-import { getStudentProfile } from '@/ai/flows/student-profile-flow';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -43,14 +42,39 @@ export default function Home() {
     setIsProcessing(true);
 
     try {
-      const student = await getStudentProfile(scanResult);
+      // Use direct student lookup instead of AI flow
+      const { getStudentById } = await import('@/lib/student-db');
+      const student = getStudentById(scanResult);
 
       if (student) {
-        // In a real app, you would also trigger a payment flow with the backend.
+        // Calculate total
+        const total = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Create transaction record
+        const transaction = {
+          id: `t${Date.now()}`,
+          vendorName: 'Multiple Vendors',
+          date: new Date().toISOString().split('T')[0],
+          items: state.items.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          total,
+          studentId: scanResult,
+          studentName: student.name,
+        };
+        
+        // Add transaction to history
+        dispatch({ type: 'ADD_TRANSACTION', payload: transaction });
+        
+        // Clear cart
         dispatch({ type: 'CLEAR_CART' });
+        
         toast({
           title: 'Payment Successful!',
-          description: `Payment authorized for ${student.name}.`,
+          description: `Payment authorized for ${student.name} (Student ID: ${scanResult}).`,
+          duration: 5000,
         });
         setIsDialogOpen(false);
         router.push('/history');
